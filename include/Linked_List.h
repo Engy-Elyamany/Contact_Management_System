@@ -13,4 +13,9 @@ typedef struct Node
 } node;
 
 node *create_node(void *node_data);
+void delete_node_by_key(node ** head, void *desired_data);
+node *search_list_by_key(node *head, void *desired_data); //just for testing
+void print_content(node *head); //just for testing
+                               //dependent on the use case
+
 #endif
