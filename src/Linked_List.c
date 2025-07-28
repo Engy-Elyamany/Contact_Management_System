@@ -80,15 +80,38 @@ void delete_node_by_key(node **head, void *desired_data)
     free(temp);
 }
 
+void destroy_list(node ** head)
+{
+     if (*head == NULL)
+    { // Empty list
+        return;
+    }
+    
+    node * temp;
+    node * cur = *head;
+    while(cur != NULL)
+    {
+        temp = cur;
+        cur = cur->next;
+        free(temp);
+    }
+    *head = NULL;
+}
+
 //This code is just for testing
 void print_content(node *head)
 {
-    while (head != NULL)
+    if(head == NULL){
+        printf("empty list\n");
+        return;
+    }
+    node * temp = head;
+    while (temp != NULL)
     {
-        printf("%s |", ((Data *)head->data)->contact_name);
-        printf("%s |", ((Data *)head->data)->contact_mail);
-        printf("%s\n", ((Data *)head->data)->contact_phone);
-        head = head->next;
+        printf("%s |", ((Data *)temp->data)->contact_name);
+        printf("%s |", ((Data *)temp->data)->contact_mail);
+        printf("%s\n", ((Data *)temp->data)->contact_phone);
+        temp = temp->next;
     }
     printf("\n");
 }

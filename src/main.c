@@ -19,7 +19,12 @@ void main()
     n3->prev = n2;
 
     print_content(head);
-    delete_node_by_key(&head,&d2);
+
+    delete_node_by_key(&head,&d1);
     printf("--------------------------------------------------\n");
     print_content(head);
+
+    destroy_list(&head);
+    print_content(head);
+    
 }
