@@ -32,6 +32,7 @@ display => contact_manager.c :
 
 
 search with a specific key: return node* (returns the found node or NULL if not found)
+	- Handeled if list is empty
  
 -----------------
 Saffana:
@@ -47,3 +48,45 @@ Engy:
 - Destroy
 - Create
 __________________________________________________________________________________________
+__________________________________________________________________________________________
+
+Task 2 : Implement business logic:
+----------------------------------
+- add new contact (email,name,phone number)
+
+- update contact information
+
+
+- Delete by name, phone number, email
+
+
+- search by name, phone number, email 
+
+
+- Display all contacts:
+	- Handeled empty list
+
+-----------------
+Saffana:
+- Add 
+
+Malak:
+- Update
+
+Engy:
+- Delete
+
+
+What have been done:
+	- sort by name
+	- search by name, phone number
+	- check Duplicates
+	- display list
+
+
+Additional:
+- sort by name ✅
+- faster search
+- Add text file to store contacts 
+- Add to favourite
+- Authentication
