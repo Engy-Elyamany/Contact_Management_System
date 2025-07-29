@@ -1,0 +1,49 @@
+Task 1 : Implement Linked List Data Structure:
+Deadline: 29-7-2025 
+---------------------------------------------
+
+create_node: return node*
+	- Handeled allocation failed
+
+delete_by_key: return void
+	Handeled:
+	- Empty list
+	- Element not found
+	- Single node
+	- First node (multiple nodes)
+	- Last node
+	- Middle node
+
+destroy: return void
+	- Handeled an already empty list 
+
+update node's content : return void
+	- Handles if the node not found 
+
+add last (append):
+	Handeled:
+	- Allocation Failed
+	- Add the first element
+	- Append on existing elements
+
+
+display => contact_manager.c :
+	- Handeled if the list is empty
+
+
+search with a specific key: return node* (returns the found node or NULL if not found)
+ 
+-----------------
+Saffana:
+- Add 
+- Update
+
+Malak:
+- Search
+- Display 
+
+Engy:
+- Delete
+- Destroy
+- Create
+__________________________________________________________________________________________
