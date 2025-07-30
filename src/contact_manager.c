@@ -1,6 +1,46 @@
 #include "../include/Linked_List.h"
 #include "../include/contact_manager.h"
 
+// array of strings to the valid domains 
+const char  *valid_domains[] = {
+    "gmail.com",
+    "yahoo.com",
+    "outlook.com",
+    "hotmail.com",
+    "protonmail.com",
+    NULL
+};
+
+int is_valid_domain(const char* domain) {
+    for (int i = 0; valid_domains[i] != NULL; i++) {
+        if (strcmp(domain, valid_domains[i]) == 0) {
+            return 1;  // Domain found
+        }
+    }
+    return 0;  // Domain not found
+}
+
+int is_valid_email(const char* email) {
+    const char* at = strchr(email, '@');
+    if (!at || at == email) return 0; //incase @ is at first or doesnt exists 
+
+    const char* dot = strrchr(email, '.');
+    if (!dot || dot < at || dot == email + strlen(email) - 1) return 0; //incase . is at first or doesnt exists 
+
+    // Split domain part
+    const char* domain = at + 1;
+    if (!is_valid_domain(domain)) return 0; //check last part 
+
+    // Check for invalid characters
+    for (int i = 0; email[i] != '\0'; i++) {
+    if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-' && email[i] != '_' && email[i] != '@') {
+        return 0;
+    }
+}
+
+
+    return 1;
+}
 // Bouns: implement a quicker sorting algorithm
 void sort_list_by_name(node *head, int count)
 {
@@ -56,4 +96,44 @@ void display_list(node *head)
         printf("------------------------\n");
         i = i->next;
     }
+}
+
+int add_node(node **head, node *added_node)
+{
+if (! (is_valid_email(added_node->data->contact_mail)))
+{
+     printf("Invalid email address\n");
+ return 0 ;
+}
+if (! (check_duplicates_by_phoneNum(*head, added_node->data ))
+{
+    
+ return 0 ;
+}
+
+
+    if (added_node == NULL)
+    { // allocation faild
+        printf("Allocation failed inside [add]\n");
+        return 0;
+    }
+    node *temp = *head;
+    if (temp == NULL)
+    { // add the very first element
+        *head = added_node;
+        printf("contact added succesfully\n");
+        return SUCCESS;
+    }
+
+    // there exist multiple elements in the list
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    } // temp is right at the last element
+
+    temp->next = added_node;
+    added_node->prev = temp;
+    added_node->next = NULL;
+    printf("contact added succesfully\n");
+    return SUCCESS;
 }
