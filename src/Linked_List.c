@@ -19,10 +19,10 @@ node *create_node(void *node_data)
     { // allocation faild
         return NULL;
     }
-    
-    Data * data_copy = malloc(sizeof(Data));
-    memcpy(data_copy,(Data*)node_data,sizeof(Data));
-    
+
+    Data *data_copy = malloc(sizeof(Data));
+    memcpy(data_copy, (Data *)node_data, sizeof(Data));
+
     new_node->data = data_copy;
     new_node->prev = NULL;
     new_node->next = NULL;
@@ -35,7 +35,7 @@ int add_node(node **head, node *added_node)
     if (added_node == NULL)
     { // allocation faild
         printf("Allocation failed inside [add]\n");
-        return 0;
+        return MEMORY_ERROR;
     }
     node *temp = *head;
     if (temp == NULL)
@@ -58,44 +58,53 @@ int add_node(node **head, node *added_node)
     return SUCCESS;
 }
 
-node *search_list_by_key(node *head, void *desired_data)
-{
-    if (head == NULL)
-    {// empty list
-        return NULL;
-    }
-    node *temp = head;
-    while (temp->data != desired_data)
-    {
-        temp = temp->next;
-    }
-    return temp;
-}
+// node *search_list_by_key(node *head, void *desired_data)
+// {
+//     printf("inside search linkedlist\n");
+//     if (head == NULL)
+//     { // empty list
+//         printf("inside search linkedlist - head is null\n");
+//         return NULL;
+//     }
+//     printf("inside search linkedlist - after if\n");
+//     node *temp = head;
+//     while (temp != NULL && temp->data != desired_data)
+//     {
+//         printf("inside search linkedlist - inside while\n");
+//         temp = temp->next;
+//     }
+//     printf("inside search linkedlist - after search logic\n");
+//     return temp;
+// }
 
-// takes return of search_function in node_to_be_update, the new Data struct that carries new information
-int update_node(node *head, node *node_to_be_update, void *new_data)
+// takes return of search function in node_to_be_update, the new Data struct that carries new information
+int update_node(node *head, node *node_to_be_updated, void *new_data)
 {
-    node *temp = search_list_by_key(head, node_to_be_update->data); // temp is right at the desired node to update
+    node *temp = node_to_be_updated; // temp is right at the desired node to update
     if (temp == NULL)
     { // node not found
         printf("node not found\n");
         return NOT_FOUND;
     }
-    temp->data = new_data;
+
+    free(node_to_be_updated->data); // free the old Data memory location
+
+    Data *data_copy = malloc(sizeof(Data));
+    memcpy(data_copy, (Data *)new_data, sizeof(Data)); // create a copy of the new data allocated on heap
+
+    temp->data = data_copy; // store the copy inside the node
     printf("contact updated successfully\n");
     return SUCCESS;
 }
 
-
-int delete_node_by_key(node **head, node * desired_node)
+// get the desired node from search function
+int delete_node_by_key(node **head, node *desired_node)
 {
     if (*head == NULL)
     { // Empty list
         return EMPTY_LIST;
     }
 
-    // // get the desired node from search function
-    // node *temp = search_list_by_key(*head, desired_data); // temp is right at the desired node
 
     if (desired_node == NULL)
     { // element not found
@@ -153,6 +162,7 @@ int destroy_list(node **head)
     {
         temp = cur;
         cur = cur->next;
+        free(temp->data);
         free(temp);
     }
     *head = NULL;

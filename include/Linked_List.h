@@ -6,8 +6,10 @@
 #include <string.h>
 
 #define SUCCESS 1
-#define EMPTY_LIST -1
-#define NOT_FOUND -2
+#define MEMORY_ERROR -1
+#define EMPTY_LIST -2
+#define NOT_FOUND -3
+#define INVALID_OPTION -4
 
 typedef struct Node
 {
