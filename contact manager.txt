@@ -47,6 +47,7 @@ Engy:
 - Delete
 - Destroy
 - Create
+
 __________________________________________________________________________________________
 __________________________________________________________________________________________
 
@@ -57,7 +58,11 @@ Task 2 : Implement business logic:
 - update contact information
 
 
-- Delete by name, phone number, email
+- Delete by name, phone number, email:
+	- By name
+	- By email
+	- By phone
+	- Delete All (with confirmation mechanism + handle user confirmation)
 
 
 - search by name, phone number, email 
@@ -75,13 +80,6 @@ Malak:
 
 Engy:
 - Delete
-
-
-What have been done:
-	- sort by name
-	- search by name, phone number
-	- check Duplicates
-	- display list
 
 
 Additional:
