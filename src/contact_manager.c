@@ -140,7 +140,7 @@ void delete_contact(node **head)
     {
     case 1:
     {
-    
+
         // this will handle empty list for now, but this should be handled at main for better flow
         //  the user will not be allowed to choose anything but add while the list is empty
         if (*head == NULL)
@@ -155,7 +155,7 @@ void delete_contact(node **head)
 
         printf("Enter the name : ");
         char name_delete[200];
-       scanf("%s",name_delete);
+        scanf("%s", name_delete);
         node *temp = search_contacts_by_name(*head, name_delete);
         delete_state = delete_node_by_key(head, temp);
     }
@@ -264,40 +264,41 @@ void display_list(node *head)
     }
 }
 
-// int add_node(node * *head, node * added_node)
-// {
-//     if (!(is_valid_email(((Data *)added_node->data)->contact_mail)))
-//     {
-//         printf("Invalid email address\n");
-//         return 0;
-//     }
-//     if (!(check_duplicates_by_phoneNum(*head, added_node->data)))
-//     {
-//         return 0;
-//     }
+int contain_digits(char *str)
+{
+    int i = 0;
+    while (str[i] != '\0')
+    {
+        if (isdigit(str[i]))
+            return 1;
+        i++;
+    }
+    return 0;
+}
 
-//     if (added_node == NULL)
-//     { // allocation faild
-//         printf("Allocation failed inside [add]\n");
-//         return 0;
-//     }
-//     node *temp = *head;
-//     if (temp == NULL)
-//     { // add the very first element
-//         *head = added_node;
-//         printf("contact added succesfully\n");
-//         return SUCCESS;
-//     }
+int valid_phone(char *num)
+{
+    int i = 0;
+    while (num[i] != '\0')
+    {
+        if (!isdigit(num[i]) && num[i] != '+')
+            return 0;
+        i++;
+    }
+    if (strlen(num) > 17 && strlen(num) < 2)
+        return 0;
 
-//     // there exist multiple elements in the list
-//     while (temp->next != NULL)
-//     {
-//         temp = temp->next;
-//     } // temp is right at the last element
+    return 1;
+}
 
-//     temp->next = added_node;
-//     added_node->prev = temp;
-//     added_node->next = NULL;
-//     printf("contact added succesfully\n");
-//     return SUCCESS;
-// }
+int valid_name(char *name)
+{
+    int len = strlen(name); // 4
+    if (len > 0 && name[len - 1] == '\n')
+        name[len - 1] = '\0';
+
+    if (contain_digits(name))
+        return 0;
+    else
+        return 1;
+}

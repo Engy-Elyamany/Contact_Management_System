@@ -34,4 +34,8 @@ int is_valid_domain(const char *domain);
 int is_valid_email(const char *email);
 int add_node(node **head, node *added_node);
 
+int contain_digits(char *str);
+int valid_phone(char *num);
+int valid_name(char *name);
+
 #endif
