@@ -20,46 +20,42 @@ void update(node *head) {
             scanf("%d", &op);
             getchar();
 
-            if (op == 1) {
-                char temp_phone[30];
-                printf("Enter the new number:\n");
-                fgets(temp_phone, sizeof(temp_phone), stdin);
-                temp_phone[strcspn(temp_phone, "\n")] = '\0';
+switch (op) {
+                case 1: {
+                    char temp_phone[30];
+                    printf("Enter the new number:\n");
+                    fgets(temp_phone, sizeof(temp_phone), stdin);
+                    temp_phone[strcspn(temp_phone, "\n")] = '\0';
 
-                int is_valid = 1;
-                int p = 0;
-                while (temp_phone[p] != '\0') {
-                    if (!isdigit(temp_phone[p])) {
-                        is_valid = 0;
-                        break;
+                    if (!valid_number(temp_phone)) {
+                        printf("Invalid number (must be digits only and up to 17 characters)\n");
+                    } else {
+                        strcpy(d->contact_phone, temp_phone);
+                        printf("Contact updated\n");
                     }
-                    p++;
+                    break;
                 }
 
-                if (!is_valid) {
-                    printf("Invalid number (must contain digits only)\n");
-                } else {
-                    strcpy(d->contact_phone, temp_phone);
-                    printf("Contact updated\n");
+                case 2: {
+                    char temp_mail[200];
+                    printf("Enter the new email:\n");
+                    fgets(temp_mail, sizeof(temp_mail), stdin);
+                    temp_mail[strcspn(temp_mail, "\n")] = '\0';
+
+                    if (!valid_email(temp_mail)) {
+                        printf("Invalid Email\n");
+                    } else {
+                        strcpy(d->contact_mail, temp_mail);
+                        printf("Contact updated\n");
+                    }
+                    break;
                 }
 
-            } else if (op == 2) {
-                char temp_mail[200];
-                printf("Enter the new email:\n");
-                fgets(temp_mail, sizeof(temp_mail), stdin);
-                temp_mail[strcspn(temp_mail, "\n")] = '\0';
-
-                if (!valid_email(temp_mail)) {
-                    printf("Invalid Email\n");
-                } else {
-                    strcpy(d->contact_mail, temp_mail);
-                    printf("Contact updated\n");
-                }
-            } else {
-                printf("Invalid option\n");
+                default:
+                    printf("Invalid option\n");
             }
 
-            break; 
+            break;
         }
         i = i->next;
     }
