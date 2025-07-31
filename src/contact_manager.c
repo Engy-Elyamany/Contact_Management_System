@@ -1,44 +1,43 @@
 #include "../include/Linked_List.h"
 #include "../include/contact_manager.h"
 
-// array of strings to the valid domains 
-const char  *valid_domains[] = {
-    "gmail.com",
-    "yahoo.com",
-    "outlook.com",
-    "hotmail.com",
-    "protonmail.com",
-    NULL
-};
-
-int is_valid_domain(const char* domain) {
-    for (int i = 0; valid_domains[i] != NULL; i++) {
-        if (strcmp(domain, valid_domains[i]) == 0) {
-            return 1;  // Domain found
+int is_valid_domain(const char *domain)
+{
+    for (int i = 0; valid_domains[i] != NULL; i++)
+    {
+        if (strcmp(domain, valid_domains[i]) == 0)
+        {
+            return 1; // Domain found
         }
     }
-    return 0;  // Domain not found
+    return 0; // Domain not found
 }
 
-int is_valid_email(const char* email) {
-    const char* at = strchr(email, '@');
-    if (!at || at == email) return 0; //incase @ is at first or doesnt exists 
+int is_valid_email(const char *email)
+{
+    const char *at = strchr(email, '@'); //find the first @ symbol
+    if (!at || at == email)
+        return 0; // incase @ is at first or doesnt exists
 
-    const char* dot = strrchr(email, '.');
-    if (!dot || dot < at || dot == email + strlen(email) - 1) return 0; //incase . is at first or doesnt exists 
+    const char *dot = strrchr(email, '.'); //find the last . symbol
+    if (!dot || dot < at || dot == email + strlen(email) - 1)
+        return 0; //incase (. doesn't exist) OR (exist before @) OR (is the last symbol)
 
     // Split domain part
-    const char* domain = at + 1;
-    if (!is_valid_domain(domain)) return 0; //check last part 
+    const char *domain = at + 1;
+    if (!is_valid_domain(domain))
+        return 0; // check last part
 
     // Check for invalid characters
-    for (int i = 0; email[i] != '\0'; i++) {
-    if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-' && email[i] != '_' && email[i] != '@') {
-        return 0;
+    for (int i = 0; email[i] != '\0'; i++)
+    {
+        //allows only letters, numbers, dots, hyphens, underscores, and @ symbol
+        if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-' && email[i] != '_' && email[i] != '@')
+        {
+            return 0;
+        }
     }
-}
-
-
+    //if passed all previous conditions, then it must be a valid email
     return 1;
 }
 // Bouns: implement a quicker sorting algorithm
@@ -61,6 +60,7 @@ void sort_list_by_name(node *head, int count)
         }
     }
 }
+
 int check_duplicates_by_phoneNum(node *head, Data *added_node)
 {
     node *temp = head;
@@ -100,17 +100,15 @@ void display_list(node *head)
 
 int add_node(node **head, node *added_node)
 {
-if (! (is_valid_email(added_node->data->contact_mail)))
+    if (!(is_valid_email(((Data *)added_node->data)->contact_mail)))
+    {
+        printf("Invalid email address\n");
+        return 0;
+    }
+if (! (check_duplicates_by_phoneNum(*head, added_node->data )))
 {
-     printf("Invalid email address\n");
- return 0 ;
+        return 0;
 }
-if (! (check_duplicates_by_phoneNum(*head, added_node->data ))
-{
-    
- return 0 ;
-}
-
 
     if (added_node == NULL)
     { // allocation faild
