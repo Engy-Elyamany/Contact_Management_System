@@ -8,7 +8,8 @@ typedef struct Data
 {
     char contact_name[200];
     char contact_mail[200];
-    char contact_phone[18]; // max phone number length is 17
+    char contact_phone[5][18]; // 5 strings, each up to 17 digits
+    int phone_count;    // number of phone numbers stored
 } Data;
 
 // array of strings to the valid domains
@@ -41,6 +42,6 @@ int add_contact(node **head);
 void delete_contact(node **head);
 void search_contacts(node *head);
 void display_list(node *head); 
-
+int remove_phone_number(Data *contact, const char *number_to_delete) ;
 
 #endif
