@@ -52,17 +52,19 @@ ________________________________________________________________________________
 __________________________________________________________________________________________
 
 Task 2 : Implement business logic:
+Deadline: 31-7-2025 
 ----------------------------------
 - add new contact (email,name,phone number)
 
 - update contact information
 
 
-- Delete by name, phone number, email:
-	- By name
-	- By email
-	- By phone
+- Delete:
+	- By name (validate user's name)
+	- By email (validate user's email)
+	- By phone (validate user's phone)
 	- Delete All (with confirmation mechanism + handle user confirmation)
+	- Handeled multiple cases (not found, empty list, invalid input)
 
 
 - search by name, phone number, email 
@@ -70,6 +72,12 @@ Task 2 : Implement business logic:
 
 - Display all contacts:
 	- Handeled empty list
+
+- All validate_functions :
+	- newline stripping before validation logic
+	- validate_name : Not contain digits or special characters
+	- validate_email : should have @ and a valid domain name
+	- validate_phone : contain only digits and a '+' for country code
 
 -----------------
 Saffana:
