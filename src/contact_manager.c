@@ -443,3 +443,58 @@ void display_list(node *head)
         i = i->next;
     }
 }
+int add_contact(node **head)
+{
+    Data temp;
+
+    printf("====== ADD A CONTACT ======\n");
+
+    while (1)
+    {
+        printf("Please enter the name: ");
+        scanf("%s", temp.contact_name);
+        if (valid_name(temp.contact_name))
+            break;
+        else
+            printf("Invalid name. Please use only letters.\n");
+    }
+
+    // Validate phone
+    while (1)
+    {
+        printf("Please enter the phone: ");
+        scanf("%s", temp.contact_phone);
+        if (valid_phone(temp.contact_phone))
+            break;
+        else
+            printf("Invalid phone number. Digits and optional '+' only.\n");
+    }
+
+    // Check for duplicates
+    if (!check_duplicates_by_phoneNum(*head, &temp))
+    {
+        return 0; // Duplicate found
+    }
+
+
+    while (1)
+    {
+        printf("Please enter the email: ");
+        scanf("%s", temp.contact_mail);
+        if (valid_email(temp.contact_mail))
+            break;
+        else
+            printf("Invalid email. Must end with valid domain like '@gmail.com'\n");
+    }
+
+ 
+    node *new_node = create_node(&temp);
+    if (!new_node)
+    {
+        printf("Memory allocation failed\n");
+        return 0;
+    }
+
+    int result = add_node(head, new_node);
+    return result == SUCCESS ? 1 : 0;
+}
