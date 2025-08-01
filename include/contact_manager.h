@@ -21,18 +21,21 @@ static char *valid_domains[] = {
     NULL};
 
 
-
-int is_valid_domain(const char *domain);
-int is_valid_email(const char *email);
+//validation functions
+int is_valid_domain( char *domain);
+int valid_email( char *email);
 int contain_digits(char *str);
+int contain_special_char(char *str);
 int valid_phone(char *num);
 int valid_name(char *name);
 
+//helper functions
 int check_duplicates_by_phoneNum(node *head, Data *added_node);
 node * search_contacts_by_name(node * head, char * name);
 node *search_contacts_by_email(node *head, char *email);
 node *search_contacts_by_phoneNum(node *head, char *phoneNum);
 
+// main business logic functions
 void sort_list_by_name( node *head, int count);
 void delete_contact(node **head);
 void search_contacts(node *head);

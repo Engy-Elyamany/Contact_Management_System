@@ -1,7 +1,7 @@
 #include "../include/Linked_List.h"
 #include "../include/contact_manager.h"
 
-int is_valid_domain(const char *domain)
+int is_valid_domain(char *domain)
 {
     for (int i = 0; valid_domains[i] != NULL; i++)
     {
@@ -13,18 +13,23 @@ int is_valid_domain(const char *domain)
     return 0; // Domain not found
 }
 
-int is_valid_email(const char *email)
+int valid_email(char *email)
 {
-    const char *at = strchr(email, '@'); // find the first @ symbol
+    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
+    int len = strlen(email);
+    if (len > 0 && email[len - 1] == '\n')
+        email[len - 1] = '\0';
+
+    char *at = strchr(email, '@'); // find the first @ symbol
     if (!at || at == email)
         return 0; // incase @ is at first or doesnt exists
 
-    const char *dot = strrchr(email, '.'); // find the last . symbol
+    char *dot = strrchr(email, '.'); // find the last . symbol
     if (!dot || dot < at || dot == email + strlen(email) - 1)
         return 0; // incase (. doesn't exist) OR (exist before @) OR (is the last symbol)
 
     // Split domain part
-    const char *domain = at + 1;
+    char *domain = at + 1;
     if (!is_valid_domain(domain))
         return 0; // check last part
 
@@ -53,8 +58,26 @@ int contain_digits(char *str)
     return 0;
 }
 
+int contain_special_char(char *str)
+{
+    int i = 0;
+    while (str[i] != '\0')
+    {
+        if (!isalnum(str[i])) // doesn't contain letters or digits = is a special character
+            return 1;
+        i++;
+    }
+    return 0;
+}
+
 int valid_phone(char *num)
 {
+
+    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
+    int len = strlen(num);
+    if (len > 0 && num[len - 1] == '\n')
+        num[len - 1] = '\0';
+
     int i = 0;
     while (num[i] != '\0')
     {
@@ -70,11 +93,13 @@ int valid_phone(char *num)
 
 int valid_name(char *name)
 {
-    int len = strlen(name); // 4
+
+    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
+    int len = strlen(name);
     if (len > 0 && name[len - 1] == '\n')
         name[len - 1] = '\0';
 
-    if (contain_digits(name))
+    if (contain_digits(name) || contain_special_char(name))
         return 0;
     else
         return 1;
@@ -172,7 +197,7 @@ void delete_contact(node **head)
 
     printf("======== Delete Contact ========\n");
 
-    //validate user's choice from menu
+    // validate user's choice from menu
     while (1)
     {
         printf("1 => Delete by name\n2 => Delete by email\n3 => Delete by phone number\n4 => Delete all\n");
@@ -210,7 +235,7 @@ void delete_contact(node **head)
             fgets(name_delete, sizeof(name_delete), stdin);
             if (!valid_name(name_delete))
             {
-                printf("Invalid Name! Please Enter only letters not digits\n");
+                printf("Invalid Name! Please Enter only letters\n");
             }
             else
             {
@@ -224,15 +249,23 @@ void delete_contact(node **head)
 
     case 2:
     {
+        // this will handle empty list for now, but this should be handled at main for better flow
+        //  the user will not be allowed to choose anything but add while the list is empty
+        if (*head == NULL)
+        {
+            delete_state = EMPTY_LIST;
+            break;
+        }
+
         char mail_delete[200];
-        //validate user email
+        // validate user email
         while (1)
         {
             printf("Enter the email : ");
             fgets(mail_delete, sizeof(mail_delete), stdin);
-            if (!is_valid_email(mail_delete))
+            if (!valid_email(mail_delete))
             {
-                printf("Invalid Email! Make sure you end your email with [@domainName.com]\n");
+                printf("Invalid Email! Make sure to end your email with [@domainName.com]\n");
             }
             else
                 break;
@@ -245,8 +278,15 @@ void delete_contact(node **head)
 
     case 3:
     {
+        // this will handle empty list for now, but this should be handled at main for better flow
+        //  the user will not be allowed to choose anything but add while the list is empty
+        if (*head == NULL)
+        {
+            delete_state = EMPTY_LIST;
+            break;
+        }
         char phone_delete[20];
-        //validate user phone
+        // validate user phone
         while (1)
         {
             printf("Enter the phone : ");
@@ -266,6 +306,13 @@ void delete_contact(node **head)
 
     case 4:
     {
+        // this will handle empty list for now, but this should be handled at main for better flow
+        //  the user will not be allowed to choose anything but add while the list is empty
+        if (*head == NULL)
+        {
+            delete_state = EMPTY_LIST;
+            break;
+        }
         int choice = 3;
         while (choice != 0 && choice != 1)
         {
