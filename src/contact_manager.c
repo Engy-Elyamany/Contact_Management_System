@@ -1,6 +1,24 @@
 #include "../include/Linked_List.h"
 #include "../include/contact_manager.h"
 
+int remove_phone_number(Data *contact, const char *number_to_delete) {
+    int index = -1;
+    for (int i = 0; i < contact->phone_count; i++) {
+        if (strcmp(contact->contact_phone[i], number_to_delete) == 0) {
+            index = i;
+            break;
+        }
+    }
+    if (index == -1) return NOT_FOUND;
+
+    // Shift remaining numbers left
+    for (int i = index; i < contact->phone_count - 1; i++) {
+        strcpy(contact->contact_phone[i], contact->contact_phone[i + 1]);
+    }
+    contact->phone_count--;
+
+    return SUCCESS;
+}
 int is_valid_domain(char *domain)
 {
     for (int i = 0; valid_domains[i] != NULL; i++)
@@ -300,7 +318,24 @@ void delete_contact(node **head)
         }
 
         node *temp = search_contacts_by_phoneNum(*head, phone_delete);
-        delete_state = delete_node_by_key(head, temp);
+if (temp != NULL) {
+    Data *contact = (Data *)temp->data;
+    if (remove_phone_number(contact, phone_delete) == SUCCESS) {
+        printf("Phone number removed from contact.\n");
+
+        // Optional: If contact has no more numbers, delete the node
+        if (contact->phone_count == 0) {
+            delete_node_by_key(head, temp);
+            printf("No more phone numbers. Contact deleted.\n");
+        }
+
+        delete_state = SUCCESS;
+    } else {
+        delete_state = NOT_FOUND;
+    }
+} else {
+    delete_state = NOT_FOUND;
+}
     }
     break;
 
@@ -438,7 +473,9 @@ void display_list(node *head)
         // printf("   ID    : %d\n", node_data->contact_id);
         printf("   Name  : %s", node_data->contact_name);
         printf("   E-mail: %s", node_data->contact_mail);
-        printf("   Number: %s\n", node_data->contact_phone);
+        for (int i = 0; i < node_data->phone_count; i++) {
+    printf("   Number %d: %s\n", i + 1, node_data->contact_phone[i]);
+}
         printf("------------------------\n");
         i = i->next;
     }
@@ -461,14 +498,21 @@ int add_contact(node **head)
     }
 
     // Validate phone
-    while (1)
-    {
-        printf("Please enter the phone: ");
-        scanf("%s", temp.contact_phone);
-        if (valid_phone(temp.contact_phone))
-            break;
-        else
-            printf("Invalid phone number. Digits and optional '+' only.\n");
+while (1)
+    {printf("How many numbers to add (max 5)? ");
+scanf("%d", &temp.phone_count);
+getchar(); // flush
+
+for (int i = 0; i < temp.phone_count; i++) {
+    printf("Enter phone number %d: ", i + 1);
+    fgets(temp.contact_phone[i], sizeof(temp.contact_phone[i]), stdin);
+    temp.contact_phone[i][strcspn(temp.contact_phone[i], "\n")] = '\0';
+
+    if (!valid_phone(temp.contact_phone[i])) {
+        printf("Invalid phone number format!\n");
+        i--; // retry
+    }
+}
     }
 
     // Check for duplicates
