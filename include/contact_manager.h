@@ -20,22 +20,23 @@ static char *valid_domains[] = {
     "protonmail.com",
     NULL};
 
+
+
+int is_valid_domain(const char *domain);
+int is_valid_email(const char *email);
+int contain_digits(char *str);
+int valid_phone(char *num);
+int valid_name(char *name);
+
 int check_duplicates_by_phoneNum(node *head, Data *added_node);
 node * search_contacts_by_name(node * head, char * name);
 node *search_contacts_by_email(node *head, char *email);
 node *search_contacts_by_phoneNum(node *head, char *phoneNum);
 
-void delete_contact(node **head);
 void sort_list_by_name( node *head, int count);
+void delete_contact(node **head);
 void search_contacts(node *head);
 void display_list(node *head); 
 
-int is_valid_domain(const char *domain);
-int is_valid_email(const char *email);
-int add_node(node **head, node *added_node);
-
-int contain_digits(char *str);
-int valid_phone(char *num);
-int valid_name(char *name);
 
 #endif
