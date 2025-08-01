@@ -37,6 +37,7 @@ node *search_contacts_by_phoneNum(node *head, char *phoneNum);
 
 // main business logic functions
 void sort_list_by_name( node *head, int count);
+int add_contact(node **head);
 void delete_contact(node **head);
 void search_contacts(node *head);
 void display_list(node *head); 
