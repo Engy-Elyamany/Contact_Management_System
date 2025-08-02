@@ -513,7 +513,7 @@ for (int i = 0; i < temp.phone_count; i++) {
         i--; // retry
     }
 }
-    }
+  break ;  }
 
     // Check for duplicates
     if (!check_duplicates_by_phoneNum(*head, &temp))
