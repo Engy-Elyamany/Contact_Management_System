@@ -1,126 +1,30 @@
 #include "../include/Linked_List.h"
 #include "../include/contact_manager.h"
+#include "../include/validation.h"
+int x;
 
-int remove_phone_number(Data *contact, const char *number_to_delete) {
+int remove_phone_number(Data *contact, const char *number_to_delete)
+{
     int index = -1;
-    for (int i = 0; i < contact->phone_count; i++) {
-        if (strcmp(contact->contact_phone[i], number_to_delete) == 0) {
+    for (int i = 0; i < contact->phone_count; i++)
+    {
+        if (strcmp(contact->contact_phone[i], number_to_delete) == 0)
+        {
             index = i;
             break;
         }
     }
-    if (index == -1) return NOT_FOUND;
+    if (index == -1)
+        return NOT_FOUND;
 
     // Shift remaining numbers left
-    for (int i = index; i < contact->phone_count - 1; i++) {
+    for (int i = index; i < contact->phone_count - 1; i++)
+    {
         strcpy(contact->contact_phone[i], contact->contact_phone[i + 1]);
     }
     contact->phone_count--;
 
     return SUCCESS;
-}
-int is_valid_domain(char *domain)
-{
-    for (int i = 0; valid_domains[i] != NULL; i++)
-    {
-        if (strcmp(domain, valid_domains[i]) == 0)
-        {
-            return 1; // Domain found
-        }
-    }
-    return 0; // Domain not found
-}
-
-int valid_email(char *email)
-{
-    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
-    int len = strlen(email);
-    if (len > 0 && email[len - 1] == '\n')
-        email[len - 1] = '\0';
-
-    char *at = strchr(email, '@'); // find the first @ symbol
-    if (!at || at == email)
-        return 0; // incase @ is at first or doesnt exists
-
-    char *dot = strrchr(email, '.'); // find the last . symbol
-    if (!dot || dot < at || dot == email + strlen(email) - 1)
-        return 0; // incase (. doesn't exist) OR (exist before @) OR (is the last symbol)
-
-    // Split domain part
-    char *domain = at + 1;
-    if (!is_valid_domain(domain))
-        return 0; // check last part
-
-    // Check for invalid characters
-    for (int i = 0; email[i] != '\0'; i++)
-    {
-        // allows only letters, numbers, dots, hyphens, underscores, and @ symbol
-        if (!isalnum(email[i]) && email[i] != '.' && email[i] != '-' && email[i] != '_' && email[i] != '@')
-        {
-            return 0;
-        }
-    }
-    // if passed all previous conditions, then it must be a valid email
-    return 1;
-}
-
-int contain_digits(char *str)
-{
-    int i = 0;
-    while (str[i] != '\0')
-    {
-        if (isdigit(str[i]))
-            return 1;
-        i++;
-    }
-    return 0;
-}
-
-int contain_special_char(char *str)
-{
-    int i = 0;
-    while (str[i] != '\0')
-    {
-        if (!isalnum(str[i])) // doesn't contain letters or digits = is a special character
-            return 1;
-        i++;
-    }
-    return 0;
-}
-
-int valid_phone(char *num)
-{
-
-    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
-    int len = strlen(num);
-    if (len > 0 && num[len - 1] == '\n')
-        num[len - 1] = '\0';
-
-    int i = 0;
-    while (num[i] != '\0')
-    {
-        if (!isdigit(num[i]) && num[i] != '+')
-            return 0;
-        i++;
-    }
-    if (strlen(num) > 17 && strlen(num) < 2)
-        return 0;
-
-    return 1;
-}
-
-int valid_name(char *name)
-{
-
-    // newline stripping (remove '\n' at the end of the user input because we're using fgets) before checking
-    int len = strlen(name);
-    if (len > 0 && name[len - 1] == '\n')
-        name[len - 1] = '\0';
-
-    if (contain_digits(name) || contain_special_char(name))
-        return 0;
-    else
-        return 1;
 }
 
 int check_duplicates_by_phoneNum(node *head, Data *added_node)
@@ -129,11 +33,14 @@ int check_duplicates_by_phoneNum(node *head, Data *added_node)
 
     while (temp != NULL)
     {
-        if (strcmp(added_node->contact_phone,
-                   ((Data *)temp->data)->contact_phone) == 0)
+        for (int i = 0; i < added_node->phone_count; i++)
         {
-            printf("NUMBER ALREADY SAVED\n");
-            return 0;
+            if (strcmp(added_node->contact_phone[i],
+                       ((Data *)temp->data)->contact_phone[i]) == 0)
+            {
+                printf("Number Already Saved For Another Contact\n");
+                return 0;
+            }
         }
         temp = temp->next;
     }
@@ -174,18 +81,39 @@ node *search_contacts_by_email(node *head, char *email)
 
 node *search_contacts_by_phoneNum(node *head, char *phoneNum)
 {
+
     node *temp = head;
     while (temp != NULL)
     {
         // search the list for the desired node that match the input phone
         Data *node_name = ((Data *)temp->data);
-        if (strcmp(node_name->contact_phone, phoneNum) == 0)
-        { // found the matching node
-            return temp;
+        for (int i = 0; i < node_name->phone_count; i++)
+        {
+            if (strcmp(node_name->contact_phone[i], phoneNum) == 0)
+            { // found the matching node
+                x = i;
+                return temp;
+            }
         }
+
         temp = temp->next;
     }
     return NULL;
+}
+
+void display_contact(node *node_to_display)
+{
+    Data *data = (Data *)node_to_display->data;
+
+    printf("Name  : %s\n", data->contact_name);
+    printf("E-mail: %s\n", data->contact_mail);
+
+    for (int i = 0; i < data->phone_count; i++)
+    {
+        printf("Number %d: %s\n", i + 1, data->contact_phone[i]);
+    }
+
+    printf("------------------------\n");
 }
 
 void sort_list_by_name(node *head, int count)
@@ -208,21 +136,120 @@ void sort_list_by_name(node *head, int count)
     }
 }
 
-void delete_contact(node **head)
+void display_list(node *head)
 {
-    int delete_state;
-    int delete_option;
+    node *i = head;
+    if (i == NULL)
+    {
+        printf("List is Empty! Nothing to display\n");
+        return;
+    }
+    while (i != NULL)
+    {
+        Data *node_data = (Data *)i->data;
+        printf("Name  : %s\n", node_data->contact_name);
+        printf("E-mail: %s", node_data->contact_mail);
+        for (int i = 0; i < node_data->phone_count; i++)
+        {
+            printf("   \nNumber: %s", node_data->contact_phone[i]);
+        }
 
-    printf("======== Delete Contact ========\n");
+        printf("\n------------------------\n");
+        i = i->next;
+    }
+}
+
+void add_contact(node **head)
+{
+    Data temp;
+
+    printf("====== ADD A CONTACT ======\n");
+    int new_name_check = get_valid_name(temp.contact_name, sizeof(temp.contact_name));
+    int new_phone_check;
+    int new_mail_check = get_valid_email(temp.contact_mail, sizeof(temp.contact_mail));
+    while (1)
+    {
+        printf("How many numbers to add (max 5)? ");
+        scanf("%d", &temp.phone_count);
+        getchar(); // flush newline after scanf
+
+        if (temp.phone_count > 0 && temp.phone_count <= 5)
+        {
+            // Get each phone number one by one
+            for (int i = 0; i < temp.phone_count; i++)
+            {
+
+                printf("Enter phone number %d: ", i + 1);
+                printf("phone number %d: ", i + 1);
+                new_phone_check = get_valid_phoneNum(temp.contact_phone[i], sizeof(temp.contact_phone[i]));
+                if (!new_phone_check)
+                {
+                    // if user refused to enter a valid number, addition failed
+                    break;
+                }
+            }
+            break; // exit the loop
+        }
+        else
+        {
+            printf("Maximum 5 numbers allowed. Please try again.\n");
+        }
+    }
+
+    if (new_name_check && new_mail_check && new_phone_check)
+    { // all valid
+
+        // Check for duplicates
+        if (!(check_duplicates_by_phoneNum(*head, &temp)))
+        {
+            return; // Duplicate found
+        }
+        node *new_node = create_node(&temp);
+        int result = add_node(head, new_node);
+        result == SUCCESS ? printf("Contact Added Successfully\n") : printf("Memory allocation failed\n");
+
+        printf("Add another contact \"1\" or exit \'0\" : ");
+        int option;
+        scanf("%d", &option);
+        getchar();
+
+        if (option)
+            add_contact(head);
+        else
+            return;
+    }
+
+    else
+    {
+        printf("Invalid Input! Adding new contact failed\n");
+        return;
+    }
+}
+
+void update_contact(node **head)
+{
+    char name[100];
+    char new_name[100];
+
+    char mail[255];
+    char new_mail[255];
+
+    char num[18];
+    char new_num[18];
+
+    node *temp = NULL;
+    int update_option;
+    int update_state;
+    int option;
+    int new_option;
 
     // validate user's choice from menu
     while (1)
     {
-        printf("1 => Delete by name\n2 => Delete by email\n3 => Delete by phone number\n4 => Delete all\n");
-        printf("Your choice: ");
-        scanf("%d", &delete_option);
+        printf("Enter an option for updating:\n1 => Update by name\n2 => Update by number\n3 => Update by email\n4 => Update all\n6 => Exit\n");
+        scanf("%d", &update_option);
         getchar(); // cleans buffer
-        if (delete_option > 4 || delete_option < 0)
+        if (update_option > 5 || update_option < 1)
         {
             printf("Invalid Option ! Please Choose From Menu\n");
         }
@@ -232,122 +259,364 @@ void delete_contact(node **head)
         }
     }
 
-    switch (delete_option)
+    if (*head == NULL)
+    {
+        printf("Empty List! Nothing to Update\n");
+        return;
+    }
+    switch (update_option)
     {
     case 1:
     {
-
-        // this will handle empty list for now, but this should be handled at main for better flow
-        //  the user will not be allowed to choose anything but add while the list is empty
-        if (*head == NULL)
+        option = get_valid_name(name, sizeof(name));
+        if (option)
         {
-            delete_state = EMPTY_LIST;
-            break;
-        }
+            // grap the node to be updated
+            temp = search_contacts_by_name(*head, name);
 
-        // validate user name
-        char name_delete[200] = " ";
-        while (1)
-        {
-            printf("Enter the name : ");
-            fgets(name_delete, sizeof(name_delete), stdin);
-            if (!valid_name(name_delete))
+            if (temp != NULL)
             {
-                printf("Invalid Name! Please Enter only letters\n");
+
+                // get the new name
+                printf("Enter the new Data :- \n");
+                new_option = get_valid_name(new_name, sizeof(new_name));
+                if (new_option)
+                {
+                    strcpy(((Data *)temp->data)->contact_name, new_name);
+                    update_state = SUCCESS;
+                }
+                else
+                {
+                    // user didn't want to try again to input a valid new_name
+                    update_state = ABORTED;
+                    break;
+                }
             }
             else
             {
-                break;
+                update_state = NOT_FOUND;
             }
         }
-        node *temp = search_contacts_by_name(*head, name_delete);
-        delete_state = delete_node_by_key(head, temp);
+        else
+            // user didn't want to try again to input a valid name
+            update_state = ABORTED;
     }
     break;
 
     case 2:
     {
-        // this will handle empty list for now, but this should be handled at main for better flow
-        //  the user will not be allowed to choose anything but add while the list is empty
-        if (*head == NULL)
+        option = get_valid_phoneNum(num, sizeof(num));
+        if (option)
         {
-            delete_state = EMPTY_LIST;
-            break;
-        }
+            // grap the node to be updated
+            temp = search_contacts_by_phoneNum(*head, num);
 
-        char mail_delete[200];
-        // validate user email
-        while (1)
-        {
-            printf("Enter the email : ");
-            fgets(mail_delete, sizeof(mail_delete), stdin);
-            if (!valid_email(mail_delete))
+            if (temp != NULL)
             {
-                printf("Invalid Email! Make sure to end your email with [@domainName.com]\n");
+                // get the new num
+
+                printf("Enter the new Data :- \n");
+                new_option = get_valid_phoneNum(new_num, sizeof(new_num));
+                if (new_option)
+                {
+                    strcpy(((Data *)temp->data)->contact_phone[x], new_num);
+                    update_state = SUCCESS;
+                }
+                else
+                {
+                    // user didn't want to try again to input a valid new_name
+                    update_state = ABORTED;
+                    break;
+                }
             }
             else
-                break;
+            {
+                update_state = NOT_FOUND;
+            }
         }
-
-        node *temp = search_contacts_by_email(*head, mail_delete);
-        delete_state = delete_node_by_key(head, temp);
+        else
+        {
+            // user didn't want to try again to input a valid name
+            update_state = ABORTED;
+        }
     }
     break;
 
     case 3:
     {
-        // this will handle empty list for now, but this should be handled at main for better flow
-        //  the user will not be allowed to choose anything but add while the list is empty
-        if (*head == NULL)
+        option = get_valid_email(mail, sizeof(mail));
+        if (option)
         {
-            delete_state = EMPTY_LIST;
-            break;
-        }
-        char phone_delete[20];
-        // validate user phone
-        while (1)
-        {
-            printf("Enter the phone : ");
-            fgets(phone_delete, sizeof(phone_delete), stdin);
-            if (!valid_phone(phone_delete))
+            // grap the node to be updated
+            temp = search_contacts_by_email(*head, mail);
+
+            if (temp != NULL)
             {
-                printf("Invalid phone number! Please Enter digits only\n");
+
+                printf("Enter the new Data :- \n");
+                // get the new num
+                new_option = get_valid_email(new_mail, sizeof(new_mail));
+                if (new_option)
+                {
+                    strcpy(((Data *)temp->data)->contact_mail, new_mail);
+                    update_state = SUCCESS;
+                }
+                else
+                {
+                    // user didn't want to try again to input a valid new_name
+                    update_state = ABORTED;
+                    break;
+                }
             }
             else
-                break;
+            {
+                update_state = NOT_FOUND;
+            }
         }
-
-        node *temp = search_contacts_by_phoneNum(*head, phone_delete);
-if (temp != NULL) {
-    Data *contact = (Data *)temp->data;
-    if (remove_phone_number(contact, phone_delete) == SUCCESS) {
-        printf("Phone number removed from contact.\n");
-
-        // Optional: If contact has no more numbers, delete the node
-        if (contact->phone_count == 0) {
-            delete_node_by_key(head, temp);
-            printf("No more phone numbers. Contact deleted.\n");
+        else
+        {
+            // user didn't want to try again to input a valid name
+            update_state = ABORTED;
         }
-
-        delete_state = SUCCESS;
-    } else {
-        delete_state = NOT_FOUND;
-    }
-} else {
-    delete_state = NOT_FOUND;
-}
     }
     break;
 
     case 4:
     {
-        // this will handle empty list for now, but this should be handled at main for better flow
-        //  the user will not be allowed to choose anything but add while the list is empty
-        if (*head == NULL)
+        option = get_valid_name(name, sizeof(name));
+        if (option)
         {
-            delete_state = EMPTY_LIST;
+            // grap the node to be updated
+            temp = search_contacts_by_name(*head, name);
+
+            if (temp != NULL)
+            {
+
+                printf("Enter the new Data :- \n");
+                // get the new data
+                Data new_data;
+
+                int new_name_check = get_valid_name(new_data.contact_name, sizeof(new_data.contact_name));
+                int new_mail_check = get_valid_email(new_data.contact_mail, sizeof(new_data.contact_mail));
+
+                printf("How many phone numbers to update (max 5)? ");
+                scanf("%d", &new_data.phone_count);
+                getchar(); // flush newline
+
+                int new_phone_check = 1; // Assume true until any fail
+                if (new_data.phone_count > 0 && new_data.phone_count <= 5)
+                {
+                    for (int i = 0; i < new_data.phone_count; i++)
+                    {
+                        printf("phone number %d: ", i + 1);
+                        new_phone_check = get_valid_phoneNum(new_data.contact_phone[i], sizeof(new_data.contact_phone[i]));
+                        if (!new_phone_check)
+                        {
+                            // if user refused to enter a valid number
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    printf("MAX 5 numbers ");
+                    printf("\n");
+                    new_phone_check = 0;
+                }
+
+                if (new_name_check && new_phone_check && new_mail_check)
+                {
+                    update_state = update_node(*head, temp, &new_data);
+                }
+                else
+                {
+                    // user didn't want to try again to input a valid data
+                    update_state = ABORTED;
+                    break;
+                }
+            }
+            else
+            {
+                update_state = NOT_FOUND;
+            }
+        }
+        else
+        {
+            // user didn't want to try again to input a valid name
+            update_state = ABORTED;
+        }
+    }
+    break;
+
+    case 6:
+    {
+        printf("Exiting Update Contact...\n");
+        return;
+    }
+    break;
+
+    default:
+        update_state = INVALID_OPTION;
+        break;
+    }
+
+    switch (update_state)
+    {
+    case NOT_FOUND:
+    {
+        printf("No Such Contact!\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Update Contact...\n");
+            return;
+        }
+        else
+            update_contact(head);
+    }
+    break;
+    case INVALID_OPTION:
+    {
+        printf("Invalid Option!\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Update Contact...\n");
+            return;
+        }
+        else
+            update_contact(head);
+    }
+    break;
+    case ABORTED:
+        printf("Updates Aborted\n");
+        break;
+    case SUCCESS:
+        printf("Contact Updated Successfully\n");
+        break;
+
+    default:
+        break;
+    }
+}
+
+void delete_contact(node **head)
+{
+    int delete_state;
+    int delete_option;
+    int option;
+
+    printf("======== Delete Contact ========\n");
+
+    // validate user's choice from menu
+    while (1)
+    {
+        printf("Enter an option for deleting:\n1 => Delete by name\n2 => Delete by email\n3 => Delete by phone number\n4 => Delete all\n5 => Exit\n");
+        printf("Your choice: ");
+        scanf("%d", &delete_option);
+        getchar(); // cleans buffer
+        if (delete_option > 5 || delete_option < 1)
+        {
+            printf("Invalid Option ! Please Choose From Menu\n");
+        }
+        else
+        {
             break;
         }
+    }
+
+    if (*head == NULL)
+    {
+        printf("Empty List! Nothing to delete\n");
+        return;
+    }
+
+    switch (delete_option)
+    {
+    case 1:
+    {
+        // validate user name
+        char name_delete[200] = " ";
+
+        option = get_valid_name(name_delete, sizeof(name_delete));
+        if (option)
+        {
+            node *temp = search_contacts_by_name(*head, name_delete);
+            delete_state = delete_node_by_key(head, temp);
+            break;
+        }
+        else
+        {
+            delete_state = ABORTED;
+        }
+    }
+    break;
+
+    case 2:
+    {
+
+        char mail_delete[200];
+        // validate user email
+        option = get_valid_email(mail_delete, sizeof(mail_delete));
+        if (option)
+        { // validated
+            node *temp = search_contacts_by_email(*head, mail_delete);
+            delete_state = delete_node_by_key(head, temp);
+            break;
+        }
+        else
+        {
+            delete_state = ABORTED;
+        }
+    }
+    break;
+
+    case 3:
+    {
+        char phone_delete[20];
+        // validate user phone
+        option = get_valid_phoneNum(phone_delete, sizeof(phone_delete));
+        if (option)
+        {
+            node *temp = search_contacts_by_phoneNum(*head, phone_delete);
+            if (temp != NULL)
+            {
+                // remove phone number
+                int res = remove_phone_number((Data *)temp->data, phone_delete);
+                if (res == SUCCESS)
+                {
+                    delete_state = SUCCESS;
+                }
+                else if (res == NOT_FOUND)
+                {
+                    delete_state = NOT_FOUND;
+                }
+                else
+                {
+                    printf("Failed to delete phone number.\n");
+                }
+            }
+            if (((Data *)temp->data)->phone_count == 0)
+            {
+                printf("No phone numbers left for this contact.\n");
+                delete_node_by_key(head, temp);
+            }
+        }
+        else
+        {
+            delete_state = ABORTED;
+        }
+    }
+    break;
+
+    case 4:
+    {
         int choice = 3;
         while (choice != 0 && choice != 1)
         {
@@ -362,6 +631,7 @@ if (temp != NULL) {
             else if (choice == 0)
             {
                 printf("Deletion Aborted \n");
+                printf("Exiting Delete Contact...\n");
             }
             else
             {
@@ -372,6 +642,12 @@ if (temp != NULL) {
     }
     break;
 
+    case 5:
+    {
+        printf("Exiting Delete Contact...\n");
+        return;
+    }
+
     default:
         delete_state = INVALID_OPTION;
         break;
@@ -379,16 +655,40 @@ if (temp != NULL) {
 
     switch (delete_state)
     {
-    case EMPTY_LIST:
-        printf("Empty List! Nothing to delete\n");
-        break;
     case NOT_FOUND:
-        printf("No Such Contact! Please Try Again\n");
-        delete_contact(head);
-        break;
+    {
+        printf("No Such Contact!\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Delete Contact...\n");
+            return;
+        }
+        else
+            delete_contact(head);
+    }
+    break;
     case INVALID_OPTION:
-        printf("Invalid Option! Please Try Again\n");
-        delete_contact(head);
+    {
+        printf("Invalid Option!\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Delete Contact...\n");
+            return;
+        }
+        else
+            delete_contact(head);
+    }
+    break;
+    case ABORTED:
+        printf("Deletion Aborted\n");
         break;
     case SUCCESS:
         printf("Contact Deleted Successfully\n");
@@ -399,417 +699,165 @@ if (temp != NULL) {
     }
 }
 
-void search_contacts(node *head)
-{
-    char contact_name[100];
-    char num[18];
-    int op;
-    int found = 0;
-    printf("Choose an option:\n1 for searching by name\n2 for searching by number\n");
-    scanf("%d", &op);
-    getchar();
-    node *i = head;
-
-    switch (op)
-    {
-    case 1:
-        printf("Enter the name:\n");
-        fgets(contact_name, sizeof(contact_name), stdin);
-        contact_name[strcspn(contact_name, "\n")] = '\0';
-        while (i != NULL)
-        {
-            Data *c = (Data *)i->data;
-            if (strcmp(c->contact_name, contact_name) == 0)
-            {
-                printf("Contact found\n");
-                printf("Name  : %s\n", c->contact_name);
-                printf("E-mail: %s\n", c->contact_mail);
-                printf("Number: %s\n", c->contact_phone);
-                printf("------------------------\n");
-                found = 1;
-            }
-            i = i->next;
-        }
-        if (!found)
-            printf("No matching contacts\n");
-        break;
-    case 2:
-        printf("Enter the number:\n");
-        scanf("%s", &num);
-        while (i != NULL)
-        {
-            Data *c = (Data *)i->data;
-            if (strcmp(c->contact_phone, num) == 0)
-            {
-                printf("Contact found\n");
-                printf("Name  : %s\n", c->contact_name);
-                printf("E-mail: %s\n", c->contact_mail);
-                printf("Number: %s\n", c->contact_phone);
-                printf("------------------------\n");
-                found = 1;
-            }
-            i = i->next;
-        }
-        if (!found)
-            printf("No matching contacts\n");
-        break;
-    default:
-        printf("Invalid option\n");
-        return;
-    }
-}
-
-void display_list(node *head)
-{
-    node *i = head;
-    if (i == NULL)
-    {
-        printf("The list is empty(inside display_list)\n");
-        return;
-    }
-    while (i != NULL)
-    {
-        Data *node_data = (Data *)i->data;
-        // printf("   ID    : %d\n", node_data->contact_id);
-        printf("   Name  : %s", node_data->contact_name);
-        printf("   E-mail: %s", node_data->contact_mail);
-        for (int i = 0; i < node_data->phone_count; i++) {
-    printf("   Number %d: %s\n", i + 1, node_data->contact_phone[i]);
-}
-        printf("------------------------\n");
-        i = i->next;
-    }
-}
-
-int add_contact(node **head)
-{
-    Data temp;
-
-    printf("====== ADD A CONTACT ======\n");
-
-    while (1)
-    {
-        printf("Please enter the name: ");
-        scanf("%s", temp.contact_name);
-        if (valid_name(temp.contact_name))
-            break;
-        else
-            printf("Invalid name. Please use only letters.\n");
-    }
-
-    // Validate phone
-while (1)
-    {printf("How many numbers to add (max 5)? ");
-scanf("%d", &temp.phone_count);
-getchar(); // flush
-
-for (int i = 0; i < temp.phone_count; i++) {
-    printf("Enter phone number %d: ", i + 1);
-    fgets(temp.contact_phone[i], sizeof(temp.contact_phone[i]), stdin);
-    temp.contact_phone[i][strcspn(temp.contact_phone[i], "\n")] = '\0';
-
-    if (!valid_phone(temp.contact_phone[i])) {
-        printf("Invalid phone number format!\n");
-        i--; // retry
-    }
-}
-  break ;  }
-
-    // Check for duplicates
-    if (!check_duplicates_by_phoneNum(*head, &temp))
-    {
-        return 0; // Duplicate found
-    }
-
-
-    while (1)
-    {
-        printf("Please enter the email: ");
-        scanf("%s", temp.contact_mail);
-        if (valid_email(temp.contact_mail))
-            break;
-        else
-            printf("Invalid email. Must end with valid domain like '@gmail.com'\n");
-    }
-
- 
-    node *new_node = create_node(&temp);
-    if (!new_node)
-    {
-        printf("Memory allocation failed\n");
-        return 0;
-    }
-
-    int result = add_node(head, new_node);
-    return result == SUCCESS ? 1 : 0;
-}
-
-void update(node *head)
+void search_contact(node *head)
 {
     char name[100];
-    char mail[255];
     char num[18];
-    int found = 0;
-    node *i = head;
-    int x;
-    printf("Enter an option for updating:\n1. Update by name\n2. Update by number\n3. Update by email");
-    scanf("%d", &x);
-    getchar();
+    char mail[255];
+    int search_option;
+    node *temp = NULL;
+    int search_state;
+    int option;
 
-    switch (x)
+    printf("======== Search Contact ========\n");
+
+    // validate user's choice from menu
+    while (1)
+    {
+        printf("Choose an option for searching:\n1. Search by name\n2. Search by phone number\n3. Search by email\n4. Exit\n");
+        printf("Your choice: ");
+        scanf("%d", &search_option);
+        getchar();
+
+        if (search_option > 4 || search_option < 1)
+        {
+            printf("Invalid Option ! Please Choose From Menu\n");
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    if (head == NULL)
+    {
+        printf("Empty List! Can't Search\n");
+        return;
+    }
+
+    switch (search_option)
     {
     case 1:
     {
-        printf("Enter the contact name:\n");
-        fgets(name, sizeof(name), stdin);
-        name[strcspn(name, "\n")] = '\0';
-
-        while (i != NULL)
+        option = get_valid_name(name, sizeof(name));
+        if (option)
         {
-            Data *d = (Data *)i->data;
-            if (strcmp(d->contact_name, name) == 0)
-            {
-                found = 1;
-                int op;
-                printf("Contact found\n");
+            temp = search_contacts_by_name(head, name);
 
-                while (1)
-                {
+            if (temp != NULL) // successful search
+                search_state = SUCCESS;
+            else
+                search_state = NOT_FOUND;
 
-                    printf("Enter an option for updating:\n1. Update phone number\n2. Update email\n");
-                    scanf("%d", &op);
-                    getchar();
-
-                    switch (op)
-                    {
-                    case 1:
-                    {
-                        char temp_phone[30];
-                        while (1)
-                        {
-                            printf("Enter the new number:\n");
-                            fgets(temp_phone, sizeof(temp_phone), stdin);
-                            temp_phone[strcspn(temp_phone, "\n")] = '\0';
-
-                            if (!valid_phone(temp_phone))
-                                printf("Invalid number.Try again\n");
-
-                            else
-                            {
-                                strcpy(d->contact_phone, temp_phone);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-
-                    case 2:
-                    {
-                        char temp_mail[200];
-                        while (1)
-                        {
-                            printf("Enter the new email:\n");
-                            fgets(temp_mail, sizeof(temp_mail), stdin);
-                            temp_mail[strcspn(temp_mail, "\n")] = '\0';
-
-                            if (!valid_email(temp_mail))
-                                printf("Invalid Email. Try again\n");
-
-                            else
-                            {
-                                strcpy(d->contact_mail, temp_mail);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-
-                    default:
-                        printf("Invalid input. Enter a valid option\n");
-                        break;
-                    }
-                    break;
-                }
-                break;
-            }
-            i = i->next;
+            break;
         }
-
-        if (!found)
-            printf("Contact name not found.\n");
-        break;
+        else
+        {
+            search_state = ABORTED;
+        }
     }
+    break;
+
     case 2:
     {
-
-        printf("Enter the contact number:\n");
-        getchar();
-        fgets(num, sizeof(num), stdin);
-        name[strcspn(name, "\n")] = '\0';
-
-        while (i != NULL)
+        option = get_valid_phoneNum(num, sizeof(num));
+        if (option)
         {
-            Data *d = (Data *)i->data;
-            if (strcmp(d->contact_phone, num) == 0)
-            {
-                found = 1;
-                int op;
-                printf("Contact found\n");
+            temp = search_contacts_by_phoneNum(head, num);
 
-                while (1)
-                {
+            if (temp != NULL) // successful search
+                search_state = SUCCESS;
+            else
+                search_state = NOT_FOUND;
 
-                    printf("Enter an option for updating:\n1. Update name\n2. Update email\n");
-                    scanf("%d", &op);
-                    getchar();
-
-                    switch (op)
-                    {
-                    case 1:
-                    {
-                        char temp_name[100];
-                        while (1)
-                        {
-                            printf("Enter the new name:\n");
-                            fgets(temp_name, sizeof(temp_name), stdin);
-                            temp_name[strcspn(temp_name, "\n")] = '\0';
-
-                            if (!valid_name(temp_name))
-
-                                printf("Invalid number.Try again\n");
-
-                            else
-                            {
-                                strcpy(d->contact_name, temp_name);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-
-                    case 2:
-                    {
-                        char temp_mail[200];
-                        while (1)
-                        {
-                            printf("Enter the new email:\n");
-                            fgets(temp_mail, sizeof(temp_mail), stdin);
-                            temp_mail[strcspn(temp_mail, "\n")] = '\0';
-
-                            if (!valid_email(temp_mail))
-
-                                printf("Invalid Email. Try again\n");
-
-                            else
-                            {
-                                strcpy(d->contact_mail, temp_mail);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-
-                    default:
-                        printf("Invalid input. Enter a valid option\n");
-                        break;
-                    }
-                    break;
-                }
-                break;
-            }
-            i = i->next;
+            break;
         }
-
-        if (!found)
-            printf("Contact number not found.\n");
-        break;
+        else
+        {
+            search_state = ABORTED;
+        }
     }
+    break;
+
     case 3:
     {
-
-        printf("Enter the contact email:\n");
-        getchar();
-        fgets(mail, sizeof(mail), stdin);
-        mail[strcspn(mail, "\n")] = '\0';
-        i = head;
-
-        while (i != NULL)
+        option = get_valid_email(mail, sizeof(mail));
+        if (option)
         {
-            Data *d = (Data *)i->data;
-            if (strcmp(d->contact_mail, mail) == 0)
-            {
-                found = 1;
-                int op;
-                printf("Contact found\n");
+            temp = search_contacts_by_email(head, mail);
 
-                while (1)
-                {
-                    printf("Enter an option for updating:\n1. Update name\n2. Update phone number\n");
-                    scanf("%d", &op);
-                    getchar();
-                    switch (op)
-                    {
+            if (temp != NULL) // successful search
+                search_state = SUCCESS;
+            else
+                search_state = NOT_FOUND;
 
-                    case 1:
-                    {
-                        char temp_name[30];
-                        while (1)
-                        {
-                            printf("Enter the new name:\n");
-                            fgets(temp_name, sizeof(temp_name), stdin);
-                            temp_name[strcspn(temp_name, "\n")] = '\0';
-
-                            if (!valid_name(temp_name))
-                                printf("Invalid number.Try again\n");
-                            else
-                            {
-                                strcpy(d->contact_name, temp_name);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                    case 2:
-                    {
-                        char temp_phone[30];
-                        while (1)
-                        {
-                            printf("Enter the new number:\n");
-                            fgets(temp_phone, sizeof(temp_phone), stdin);
-                            temp_phone[strcspn(temp_phone, "\n")] = '\0';
-
-                            if (!valid_phone(temp_phone))
-                                printf("Invalid number.Try again\n");
-                            else
-                            {
-                                strcpy(d->contact_phone, temp_phone);
-                                printf("Contact updated\n");
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                    default:
-                        printf("Invalid input. Enter a valid option\n");
-                        break;
-                    }
-                    break;
-                }
-                break;
-            }
-            i = i->next;
+            break;
         }
-        if (!found)
-            printf("Contact email not found.\n");
+        else
+        {
+            search_state = ABORTED;
+        }
+    }
+    break;
+
+    case 4:
+    {
+        printf("Exiting search...\n");
+        return;
+    }
+
+    default:
+        search_state = INVALID_OPTION;
         break;
     }
+
+    switch (search_state)
+    {
+    case NOT_FOUND:
+    {
+        printf("No Matching Contact!\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Search Contact...\n");
+            return;
+        }
+        else
+            search_contact(head);
+    }
+    break;
+    case INVALID_OPTION:
+    {
+        printf("Invalid Option! Please Try Again\n");
+        printf("Try again? [1 / 0] ");
+        scanf("%d", &option);
+        getchar();
+
+        if (!option)
+        {
+            printf("Exiting Search Contact...\n");
+            return;
+        }
+        else
+            search_contact(head);
+    }
+    break;
+    case ABORTED:
+        printf("Search Aborted\n");
+        printf("Exiting Search Contact...\n");
+        break;
+    case SUCCESS:
+    {
+        printf("Contact Found Successfully\n");
+        display_contact(temp);
+    }
+
+    break;
+
     default:
-        printf("Invalid choice.\n");
         break;
     }
 }
