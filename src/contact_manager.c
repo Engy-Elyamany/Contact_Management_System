@@ -179,7 +179,6 @@ void add_contact(node **head)
             for (int i = 0; i < temp.phone_count; i++)
             {
 
-                printf("Enter phone number %d: ", i + 1);
                 printf("phone number %d: ", i + 1);
                 new_phone_check = get_valid_phoneNum(temp.contact_phone[i], sizeof(temp.contact_phone[i]));
                 if (!new_phone_check)
@@ -246,7 +245,7 @@ void update_contact(node **head)
     // validate user's choice from menu
     while (1)
     {
-        printf("Enter an option for updating:\n1 => Update by name\n2 => Update by number\n3 => Update by email\n4 => Update all\n6 => Exit\n");
+        printf("Enter an option for updating:\n1 => Update by name\n2 => Update by number\n3 => Update by email\n4 => Update all\n5 => Exit\n");
         scanf("%d", &update_option);
         getchar(); // cleans buffer
         if (update_option > 5 || update_option < 1)
@@ -264,6 +263,7 @@ void update_contact(node **head)
         printf("Empty List! Nothing to Update\n");
         return;
     }
+   
     switch (update_option)
     {
     case 1:
@@ -448,7 +448,7 @@ void update_contact(node **head)
     }
     break;
 
-    case 6:
+    case 5:
     {
         printf("Exiting Update Contact...\n");
         return;
