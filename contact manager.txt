@@ -54,21 +54,17 @@ ________________________________________________________________________________
 Task 2 : Implement business logic:
 Deadline: 31-7-2025 
 ----------------------------------
-- add new contact (email,name,phone number)
+- Add:
+	Validates all data, checks duplicates, creates node
 
-- update contact information
+- Search: 
+	By name, email, or any phone number
 
+- Update: 
+	Can update individual fields or entire contact
 
-- Delete:
-	- By name (validate user's name)
-	- By email (validate user's email)
-	- By phone (validate user's phone)
-	- Delete All (with confirmation mechanism + handle user confirmation)
-	- Handeled multiple cases (not found, empty list, invalid input)
-
-
-- search by name, phone number, email 
-
+- Delete: 
+	Can delete by any field, or remove specific phone numbers
 
 - Display all contacts:
 	- Handeled empty list
@@ -96,3 +92,9 @@ Additional:
 - Add text file to store contacts 
 - Add to favourite
 - Authentication
+
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+
+Task 3 : testing and main.c:
+Deadline: 2-8-2025 
